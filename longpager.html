@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dennis Sterzenbach - Senior JavaScript Developer</title>
+    <link rel="stylesheet" type="text/css" href="longpager.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+
+    <!-- WebApp - default -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ffffff">
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+</head>
+
+<body>
+    <header class="stage" id="stage1">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Sydney_Opera_House_Close_up_HDR_Sydney_Australia.jpg/1024px-Sydney_Opera_House_Close_up_HDR_Sydney_Australia.jpg" alt="1" />
+    </header>
+
+    <nav>
+        <ul>
+            <li><a data-state data-state-id="1" href="#section1">section1</a></li>
+            <li><a data-state data-state-id="2" href="#section2">section2</a></li>
+            <li><a data-state data-state-id="3" href="#section3">section3</a></li>
+            <li><a data-state data-state-id="4" href="#section4">section4</a></li>
+            <li><a data-state data-state-id="5" href="#section5">section5</a></li>
+        </ul>
+    </nav>
+    <main class="sdhp2017--main">
+        <section class="some-section" id="section1">
+            <h1>section1</h1>
+        </section>
+        <section class="some-section" id="section2">
+            <h1>section2</h1>
+        </section>
+        <section class="some-section" id="section3">
+            <h1>section3</h1>
+        </section>
+        <section class="some-section" id="section4">
+            <h1>section4</h1>
+        </section>
+        <section class="some-section" id="section5">
+            <h1>section5</h1>
+        </section>
+    </main>
+
+    <script src="StateManager.js"></script>
+    <script src="StateManager.Plugin.ActivateOnScroll.js"></script>
+
+    <script>
+        function applyIEPatch() {
+            if (!_.has(window, 'console')) {
+                window.console = {};
+            }
+
+            if (!_.isFunction(window.console.log)) {
+                window.console.log = function() {};
+            }
+
+            if (!_.isFunction(window.console.debug)) {
+                window.console.debug = function() {};
+            }
+
+            if (!_.isFunction(window.console.info)) {
+                window.console.info = function() {};
+            }
+
+            if (!_.isFunction(window.console.table)) {
+                window.console.table = function() {};
+            }
+        }
+    </script>
+
+    <script>
+        function queryElement(selector) {
+            return document.querySelector(selector);
+        }
+
+        var stateMgr = new StateManager();
+        stateMgr.registerState(new State('section1', '1', queryElement('#section1')));
+        stateMgr.registerState(new State('section2', '2', queryElement('#section2')));
+        stateMgr.registerState(new State('section3', '3', queryElement('#section3')));
+        stateMgr.registerState(new State('section4', '4', queryElement('#section4')));
+        stateMgr.registerState(new State('section5', '5', queryElement('#section5')));
+
+        stateMgr.getRegisteredState('section1').onActivatedCallbacks.push(wasActivated);
+        stateMgr.getRegisteredState('section2').onActivatedCallbacks.push(wasActivated);
+        stateMgr.getRegisteredState('section3').onActivatedCallbacks.push(wasActivated);
+        stateMgr.getRegisteredState('section4').onActivatedCallbacks.push(wasActivated);
+        stateMgr.getRegisteredState('section5').onActivatedCallbacks.push(wasActivated);
+
+        stateMgr.initialize();
+        stateMgr.disableScrollbasedActivationFn = stateMgr.enableActivateStateOnScroll(true);
+
+        function wasActivated(state) {
+            console.log('state was activated (callback)', state.name);
+
+            // markSectionsNavItemActive(state);
+        }
+
+        function MainNavigationManager() {
+            this.naviActiveItemClass = 'nav--item__is-active';
+        }
+
+        MainNavigationManager.prototype.init = function init() {
+            this.registerListeners();
+        };
+
+        MainNavigationManager.prototype.updateURLWithActivatedState = function updateURLWithActivatedState(activatedState) {
+            // console.debug('updateURLWithActivatedState');
+
+            var hash = '#' + activatedState.name;
+            
+            if (history.pushState) {
+                history.pushState(null, null, hash);
+            } else {
+                window.location.hash = hash;
+            }
+        };
+
+        MainNavigationManager.prototype.getAllNavigationItems = function getAllNavigationItems() {
+            return document.querySelectorAll('nav>ul>li>a');
+        };
+
+        MainNavigationManager.prototype.registerListeners = function registerListeners() {
+            this.getAllNavigationItems().forEach(addEventListeners.bind(this));
+
+            function addEventListeners(linkEl) {
+                linkEl.addEventListener('click', this.activateStateFromEvent.bind(this));
+
+                // add callback to the registered state (if available)
+                // so that an activation of that state within stateManager will
+                // also cause an update on navigation
+                var regState = stateMgr.getRegisteredState(this.getNameForStateId(this.getStateIdFromNavItem(linkEl)));
+
+                if (regState) {
+                    regState.onActivatedCallbacks.push(this.updateNavigationItemsAccordingToActivatedState.bind(this));
+                }
+
+                // console.log('RegNaviHandlers >>>', regState, linkEl);
+            }
+        };
+
+        MainNavigationManager.prototype.updateNavigationItemsAccordingToActivatedState = function updateNavigationItemsAccordingToActivatedState(activatedState) {
+            if (activatedState && activatedState.id) {
+                var allNaviItems = this.getAllNavigationItems();
+
+                // update style of the navigation items according to the activated state
+                if (allNaviItems) {
+                    allNaviItems.forEach(function(linkEl) {
+                        if (this.getStateIdFromNavItem(linkEl) === activatedState.id) {
+                            linkEl.classList.add(this.naviActiveItemClass);
+                        } else {
+                            linkEl.classList.remove(this.naviActiveItemClass);
+                        }
+                    }.bind(this));
+                }
+
+                // in addition to updating the style on the user interface,
+                // also update the URL with the matching anchor.
+                // this enables us to point the user to the correct state again
+                // when he reloads the page or bookmarks it and wants to 
+                // deeplink into it later again.
+                this.updateURLWithActivatedState(activatedState);
+            }
+        };
+
+        MainNavigationManager.prototype.getNameForStateId = function getNameForStateId(stateId) {
+            return 'section' + stateId;
+        };
+
+        MainNavigationManager.prototype.getStateIdFromNavItem = function getStateIdFromNavItem(item) {
+            return item && item.attributes && item.attributes.getNamedItem('data-state-id').value;
+        };
+
+        MainNavigationManager.prototype.activateStateFromEvent = function activateStateFromEvent(e) {
+            this.activateStateById(this.getStateIdFromNavItem(e.target));
+        };
+
+        MainNavigationManager.prototype.activateStateById = function activateStateById(id) {
+            var name = this.getNameForStateId(id);
+
+            console.log(';;', name);
+            stateMgr.activateState(name);
+        };
+
+        var navMgr = new MainNavigationManager();
+        navMgr.init();
+    </script>
+
+    <footer>
+        <p>
+            &copy; Copyright 2015 - 2017 Dennis Sterzenbach.
+        </p>
+    </footer>
+</body>
+</html>
