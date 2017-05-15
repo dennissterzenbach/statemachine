@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dennis Sterzenbach - Senior JavaScript Developer</title>
+    <link rel="stylesheet" type="text/css" href="longpager.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+
+    <!-- WebApp - default -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ffffff">
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+</head>
+
+<body>
+    <header class="stage" id="stage1">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Sydney_Opera_House_Close_up_HDR_Sydney_Australia.jpg/1024px-Sydney_Opera_House_Close_up_HDR_Sydney_Australia.jpg" alt="1" />
+
+        <input type="range" min="0" max="250" value="100" name="blurit" />
+    </header>
+
+    <script type="text/javascript">
+        const blurInput = document.querySelector('input[name="blurit"]');
+        blurInput.addEventListener('change', updateBlur);
+        blurInput.addEventListener('mousemove', updateBlur);
+
+        function updateBlur() {
+            document.documentElement.style.setProperty('--blur', this.value/10 + 'px');
+        }
+    </script>
+
+    <div class="wrap">
+    <p id="navi">
+        This is a elem....
+    </p>
+<p>
+&nbsp;
+</p>
+<p>
+&nbsp;
+</p>
+        <nav>
+            <ul>
+                <li><a data-state data-state-id="1" href="#section1">section1</a></li>
+                <li><a data-state data-state-id="2" href="#section2">section2</a></li>
+                <li><a data-state data-state-id="3" href="#section3">section3</a></li>
+                <li><a data-state data-state-id="4" href="#section4">section4</a></li>
+                <li><a data-state data-state-id="5" href="#section5">section5</a></li>
+            </ul>
+        </nav>
+
+        <main class="sdhp2017--main flx-flexable-sections flx-flexable-sections__vertical flx-animate-anim1">
+            <section class="some-section shadow-effect2 noise-section" id="section1">
+                <label>
+                    <input type="checkbox" name="section1TestCheck" value="1">
+                    Check this to make application go to "section2" state.
+                </label>
+                <div data-section-content></div>
+            </section>
+            <section class="some-section shadow-effect2 noise-section" id="section2">
+                <div data-section-content>test</div>
+            </section>
+            <section class="some-section shadow-effect2 noise-section" id="section3">
+                <div data-section-content></div>
+            </section>
+            <section class="some-section shadow-effect2 noise-section" id="section4">
+                <div data-section-content></div>
+            </section>
+            <section class="some-section shadow-effect2 noise-section" id="section5">
+                <div data-section-content></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function applyIEPatch() {
+            if (!_.has(window, 'console')) {
+                window.console = {};
+            }
+
+            if (!_.isFunction(window.console.log)) {
+                window.console.log = function() {};
+            }
+
+            if (!_.isFunction(window.console.debug)) {
+                window.console.debug = function() {};
+            }
+
+            if (!_.isFunction(window.console.info)) {
+                window.console.info = function() {};
+            }
+
+            if (!_.isFunction(window.console.table)) {
+                window.console.table = function() {};
+            }
+        }
+    </script>
+
+    <script src="app/core/Logger.js"></script>
+    <script src="app/core/ContentLoader.js"></script>
+    <script src="app/state/config/StateConfig.js"></script>
+    <script src="app/state/model/State.js"></script>
+    <script src="app/state/config/StateConfigService.js"></script>
+    <script src="dummyContent/DCService.js"></script>
+    <script src="app/state/registry/StateRegistry.js"></script>
+    <script src="app/state/registry/StateRegistryBuilderService.js"></script>
+    <script src="app/state/StateStore.js"></script>
+    <script src="app/state/StateController.js"></script>
+    <script src="app/core/MainApp.js"></script>
+    <script src="app/main.js"></script>
+
+    <footer>
+        <p>
+            &copy; Copyright 2015 - 2017 Dennis Sterzenbach.
+        </p>
+    </footer>
+</body>
+</html>
