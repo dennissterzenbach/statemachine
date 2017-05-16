@@ -6,10 +6,14 @@ class MainApp {
 
     gotoNextState() {
         this.stateController.update(this.stateController.messagesRegistry.next, this.stateController.store.model.current);
+
+        return this;
     }
 
     gotoPreviousState() {
         this.stateController.update(this.stateController.messagesRegistry.prev, this.stateController.store.model.current);
+
+        return this;
     }
 
     startEventLoop() {
@@ -36,6 +40,8 @@ class MainApp {
 
             return stopEventLoop;
         })(this);
+
+        return this;
     }
 
     stopEventLoop() {
@@ -45,5 +51,7 @@ class MainApp {
         }
 
         this.eventLoop = null;
+
+        return this;
     }
 }
