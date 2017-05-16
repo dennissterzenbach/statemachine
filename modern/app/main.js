@@ -1,10 +1,9 @@
 let logger = new Logger();
 let stateConfigService = new StateConfigService(StateConfig);
-let stateRegistryService = new StateRegistryBuilderService(logger);
+let stateFactory = new StateFactory(logger);
+let stateRegistryService = new StateRegistryBuilderService(logger, stateFactory);
 let stateRegistry = stateRegistryService.initStateRegistry(stateConfigService);
 console.log('##### stateRegistry:', stateRegistry);
-
-var ctrl = new StateController();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // trigger loading states' contents
@@ -22,6 +21,10 @@ function loadContents(stateRegistry) {
 }
 
 loadContents(stateRegistry);
+let virtualDOM = new VirtualDOM();
+let menuBuilder = new MenuUIBuilder(logger, virtualDOM);
+let menuDOM = menuBuilder.buildMenuFromRegistry(stateRegistry);
+menuBuilder.addMenuToDOM('[data-state-navigation]', menuDOM);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +37,7 @@ function updateSaneState() {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+var ctrl = new StateController(stateRegistry);
 let mainApp = new MainApp(ctrl, logger);
 mainApp.startEventLoop();
 

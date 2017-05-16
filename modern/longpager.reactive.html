@@ -46,15 +46,7 @@
 <p>
 &nbsp;
 </p>
-        <nav>
-            <ul>
-                <li><a data-state data-state-id="1" href="#section1">section1</a></li>
-                <li><a data-state data-state-id="2" href="#section2">section2</a></li>
-                <li><a data-state data-state-id="3" href="#section3">section3</a></li>
-                <li><a data-state data-state-id="4" href="#section4">section4</a></li>
-                <li><a data-state data-state-id="5" href="#section5">section5</a></li>
-            </ul>
-        </nav>
+        <nav data-state-navigation></nav>
 
         <main class="sdhp2017--main flx-flexable-sections flx-flexable-sections__vertical flx-animate-anim1">
             <section class="some-section shadow-effect2 noise-section" id="section1">
@@ -79,40 +71,41 @@
         </main>
     </div>
 
-    <script>
-        function applyIEPatch() {
-            if (!_.has(window, 'console')) {
-                window.console = {};
-            }
-
-            if (!_.isFunction(window.console.log)) {
-                window.console.log = function() {};
-            }
-
-            if (!_.isFunction(window.console.debug)) {
-                window.console.debug = function() {};
-            }
-
-            if (!_.isFunction(window.console.info)) {
-                window.console.info = function() {};
-            }
-
-            if (!_.isFunction(window.console.table)) {
-                window.console.table = function() {};
-            }
-        }
+    <script data-polyfill="Console-polyfill">
+        // Console-polyfill. MIT license.
+        // https://github.com/paulmillr/console-polyfill
+        // Make it safe to do console.log() always.
+        (function(global) {
+          'use strict';
+          if (!global.console) {
+            global.console = {};
+          }
+          var con = global.console;
+          var prop, method;
+          var dummy = function() {};
+          var properties = ['memory'];
+          var methods = ('assert,clear,count,debug,dir,dirxml,error,exception,group,' +
+             'groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,' +
+             'show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn').split(',');
+          while (prop = properties.pop()) if (!con[prop]) con[prop] = {};
+          while (method = methods.pop()) if (!con[method]) con[method] = dummy;
+          // Using `this` for web workers & supports Browserify / Webpack.
+        })(typeof window === 'undefined' ? this : window);
     </script>
 
     <script src="app/core/Logger.js"></script>
     <script src="app/core/ContentLoader.js"></script>
+    <script src="app/core/ui/VirtualDOM.js"></script>
     <script src="app/state/config/StateConfig.js"></script>
     <script src="app/state/model/State.js"></script>
     <script src="app/state/config/StateConfigService.js"></script>
     <script src="dummyContent/DCService.js"></script>
+    <script src="app/state/registry/StateFactory.js"></script>
     <script src="app/state/registry/StateRegistry.js"></script>
     <script src="app/state/registry/StateRegistryBuilderService.js"></script>
     <script src="app/state/StateStore.js"></script>
     <script src="app/state/StateController.js"></script>
+    <script src="app/core/ui/MenuUIBuilder.js"></script>
     <script src="app/core/MainApp.js"></script>
     <script src="app/main.js"></script>
 

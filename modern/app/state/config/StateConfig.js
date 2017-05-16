@@ -1,5 +1,6 @@
 var StateConfig = {
     "section1": {
+        "type": "StateSection1",
         "next": "section2",
         "name": "section1",
         "selector": "#section1",

@@ -9,17 +9,6 @@ class State {
 
         this.onActivatedCallbacks = [];
         this.onDeactivatedCallbacks = [];
-
-        if (this.name === 'section1') {
-            function checkIfCheckboxChecked() {
-                let checkboxElement = this.element.querySelector('[name="section1TestCheck"]');
-
-                return checkboxElement && checkboxElement.checked;
-            }
-
-            this.onBeforeDeactivatedCallbacks = this.onBeforeDeactivatedCallbacks || [];
-            this.onBeforeDeactivatedCallbacks.push(checkIfCheckboxChecked.bind(this));
-        }
     }
 
     setContentLoader(contentLoader) {
@@ -90,4 +79,20 @@ class State {
             }
         }
     }
+}
+
+class StateSection1 extends State {
+    constructor(name, id, htmlElement) {
+        super(name, id, htmlElement);
+
+        function checkIfCheckboxChecked() {
+            let checkboxElement = this.element.querySelector('[name="section1TestCheck"]');
+
+            return checkboxElement && checkboxElement.checked;
+        }
+
+        this.onBeforeDeactivatedCallbacks = this.onBeforeDeactivatedCallbacks || [];
+        this.onBeforeDeactivatedCallbacks.push(checkIfCheckboxChecked.bind(this));
+    }
+
 }

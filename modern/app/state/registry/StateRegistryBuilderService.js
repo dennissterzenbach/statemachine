@@ -1,6 +1,7 @@
 class StateRegistryBuilderService {
-    constructor(logger) {
+    constructor(logger, stateFactory) {
         this.logger = logger;
+        this.stateFactory = stateFactory;
     }
 
     initStateRegistry(stateConfigurationService) {
@@ -8,11 +9,15 @@ class StateRegistryBuilderService {
         let stateRegistry = new StateRegistry(this.logger);
         let contentLoader = new ContentLoader(this.logger);
 
+        function createState(type, descriptor) {
+            return stateFactory.createState(type, descriptor);
+        }
+
         for (let i in availStateNames) {
             let stateId = availStateNames[i];
             let stateConf = stateConfigurationService.config[stateId];
 
-            stateRegistry.addState(new State(stateConf.name, stateId, document.querySelector(stateConf.selector)));
+            stateRegistry.addState(createState.call(this, stateConf.type, [ stateConf.name, stateId, document.querySelector(stateConf.selector) ]));
         }
 
         for (let [stateId, state] of stateRegistry.registeredStates()) {
@@ -40,23 +45,30 @@ class StateRegistryBuilderService {
                         this.logger.log('onBeforeDeactivatedCallback called for "%s"', state.name);
 
                         return true;
-                    });
+                    }.bind(this));
                 }
 
-                if (stateConf.prev) {
-                    let previousStateId = stateConf.prev;
+                addPrevStates(stateConf, state);
+                addNextStates(stateConf, state);
+            }
+        }
 
-                    if (stateRegistry.has(previousStateId)) {
-                        state.previousStates.push(stateRegistry.getState(previousStateId));
-                    }
+        function addNextStates(stateConf, state) {
+            if (stateConf.next) {
+                let nextStateId = stateConf.next;
+
+                if (stateRegistry.has(nextStateId)) {
+                    state.nextStates.push(stateRegistry.getState(nextStateId));
                 }
+            }
+        }
 
-                if (stateConf.next) {
-                    let nextStateId = stateConf.next;
+        function addPrevStates(stateConf, state) {
+            if (stateConf.prev) {
+                let previousStateId = stateConf.prev;
 
-                    if (stateRegistry.has(nextStateId)) {
-                        state.nextStates.push(stateRegistry.getState(nextStateId));
-                    }
+                if (stateRegistry.has(previousStateId)) {
+                    state.previousStates.push(stateRegistry.getState(previousStateId));
                 }
             }
         }
